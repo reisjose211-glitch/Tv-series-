@@ -2,6 +2,8 @@
 
 /* ---------- Data ---------- */
 const STORE_KEY = 'seriesTracker.v1';
+// Built-in TMDB key so the app works without setup. A key saved in Settings takes priority.
+const BUILT_IN_KEY = 'a048fcb680b8b37563ff750b3ff8f690';
 const IMG = 'https://image.tmdb.org/t/p/';
 const STATUSES = { watching: 'Watching', towatch: 'To Watch', watched: 'Watched', onhold: 'On hold', dropped: 'Dropped' };
 const DEFAULT_SERVICES = ['Netflix', 'Amazon Prime Video', 'Disney Plus', 'Apple TV+', 'BBC iPlayer', 'ITVX', 'Channel 4', 'Now TV', 'Paramount Plus', 'Sky Go'];
@@ -46,7 +48,8 @@ const $ = (s, el = document) => el.querySelector(s);
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const isManual = (id) => String(id).startsWith('m');
 const entries = () => Object.values(db.shows);
-const hasKey = () => !!db.settings.apiKey.trim();
+const apiKey = () => db.settings.apiKey.trim() || BUILT_IN_KEY;
+const hasKey = () => !!apiKey();
 const fmtRating = (r) => (Number.isInteger(r) ? String(r) : r.toFixed(1));
 
 let toastTimer;
@@ -106,7 +109,7 @@ function groupBy(list, fn) {
 /* ---------- TMDB ---------- */
 const apiCache = new Map();
 async function api(path, params = {}) {
-  const key = db.settings.apiKey.trim();
+  const key = apiKey();
   if (!key) throw new Error('Add your TMDB key in Settings first.');
   const u = new URL('https://api.themoviedb.org/3' + path);
   for (const [k, v] of Object.entries(params)) if (v !== '' && v != null) u.searchParams.set(k, v);
@@ -587,9 +590,9 @@ function openSettings() {
       <h2>Settings</h2>
       <h3>TMDB API key</h3>
       <div class="stack">
-        <input class="field" id="key-input" value="${esc(s.apiKey)}" placeholder="Paste your TMDB API key" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="TMDB API key">
+        <input class="field" id="key-input" value="${esc(s.apiKey)}" placeholder="${BUILT_IN_KEY ? 'Using the built-in key' : 'Paste your TMDB API key'}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="TMDB API key">
         <button class="btn primary" data-act="save-key">Save key</button>
-        <p class="muted" style="font-size:.85rem">Free from <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">themoviedb.org → Settings → API</a>. It is stored only on this device.</p>
+        <p class="muted" style="font-size:.85rem">${BUILT_IN_KEY ? 'The app already has a key built in, so you can leave this empty. To use your own, get one ' : 'Free '}from <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">themoviedb.org → Settings → API</a>. It is stored only on this device.</p>
       </div>
       <h3>Appearance</h3>
       <select class="field" id="set-theme" aria-label="Theme">
