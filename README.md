@@ -12,9 +12,8 @@ Your library is saved in your browser on your device. Use **Settings → Export 
 
 ## Set-up
 
-1. **Get a free TMDB key**: create an account at <https://www.themoviedb.org/signup>, then go to
-   <https://www.themoviedb.org/settings/api> and request an API key for personal use.
-2. Open the app, paste the key into the box on the Explore tab (or Settings) and save.
+None needed: a TMDB API key is built into `app.js` (`BUILT_IN_KEY`). To use a different key, paste it in **Settings**;
+a key saved there takes priority. Free keys are available at <https://www.themoviedb.org/settings/api>.
 
 ## Put it online with GitHub Pages
 

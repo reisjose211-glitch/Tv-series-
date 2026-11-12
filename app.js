@@ -2,6 +2,8 @@
 
 /* ---------- Data ---------- */
 const STORE_KEY = 'seriesTracker.v1';
+// Built-in TMDB key so the app works without setup. A key saved in Settings takes priority.
+const BUILT_IN_KEY = 'a048fcb680b8b37563ff750b3ff8f690';
 const IMG = 'https://image.tmdb.org/t/p/';
 const STATUSES = { watching: 'Watching', towatch: 'To Watch', watched: 'Watched', onhold: 'On hold', dropped: 'Dropped' };
 const DEFAULT_SERVICES = ['Netflix', 'Amazon Prime Video', 'Disney Plus', 'Apple TV+', 'BBC iPlayer', 'ITVX', 'Channel 4', 'Now TV', 'Paramount Plus', 'Sky Go'];
@@ -46,7 +48,8 @@ const $ = (s, el = document) => el.querySelector(s);
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const isManual = (id) => String(id).startsWith('m');
 const entries = () => Object.values(db.shows);
-const hasKey = () => !!db.settings.apiKey.trim();
+const apiKey = () => db.settings.apiKey.trim() || BUILT_IN_KEY;
+const hasKey = () => !!apiKey();
 const fmtRating = (r) => (Number.isInteger(r) ? String(r) : r.toFixed(1));
 
 let toastTimer;
@@ -106,7 +109,7 @@ function groupBy(list, fn) {
 /* ---------- TMDB ---------- */
 const apiCache = new Map();
 async function api(path, params = {}) {
-  const key = db.settings.apiKey.trim();
+  const key = apiKey();
   if (!key) throw new Error('Add your TMDB key in Settings first.');
   const u = new URL('https://api.themoviedb.org/3' + path);
   for (const [k, v] of Object.entries(params)) if (v !== '' && v != null) u.searchParams.set(k, v);
@@ -222,7 +225,7 @@ function renderExplore() {
     return;
   }
   v.innerHTML = `
-    <input class="field" id="ex-q" type="search" placeholder="Search for a series…" aria-label="Search for a series" value="${esc(ui.q)}">
+    <div class="search"><input class="field" id="ex-q" type="search" placeholder="Search for a series…" aria-label="Search for a series" value="${esc(ui.q)}"><button class="search-clear" data-act="clear-search" aria-label="Clear search" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
     <div class="controls">
       <select class="field" id="ex-service" aria-label="Streaming service"><option value="">All services</option></select>
       <select class="field" id="ex-genre" aria-label="Genre"><option value="">All genres</option></select>
@@ -303,7 +306,7 @@ function renderLibrary() {
   const listChips = db.lists
     .map((l) => `<button class="chip" data-act="lib-list" data-v="${esc(l.id)}" aria-pressed="${ui.libList === l.id}">${esc(l.name)} (${l.ids.filter((id) => db.shows[id]).length})</button>`).join('');
   $('#view').innerHTML = `
-    <input class="field" id="lib-q" type="search" placeholder="Filter your library…" aria-label="Filter your library" value="${esc(ui.libQ)}">
+    <div class="search"><input class="field" id="lib-q" type="search" placeholder="Filter your library…" aria-label="Filter your library" value="${esc(ui.libQ)}"><button class="search-clear" data-act="clear-search" aria-label="Clear search" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
     <div class="chips" role="group" aria-label="Status">${statusChips}</div>
     <div class="chips" role="group" aria-label="Your lists">${listChips}<button class="chip" data-act="list-new">+ New list</button></div>
     <div class="controls">
@@ -587,9 +590,9 @@ function openSettings() {
       <h2>Settings</h2>
       <h3>TMDB API key</h3>
       <div class="stack">
-        <input class="field" id="key-input" value="${esc(s.apiKey)}" placeholder="Paste your TMDB API key" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="TMDB API key">
+        <input class="field" id="key-input" value="${esc(s.apiKey)}" placeholder="${BUILT_IN_KEY ? 'Using the built-in key' : 'Paste your TMDB API key'}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="TMDB API key">
         <button class="btn primary" data-act="save-key">Save key</button>
-        <p class="muted" style="font-size:.85rem">Free from <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">themoviedb.org → Settings → API</a>. It is stored only on this device.</p>
+        <p class="muted" style="font-size:.85rem">${BUILT_IN_KEY ? 'The app already has a key built in, so you can leave this empty. To use your own, get one ' : 'Free '}from <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">themoviedb.org → Settings → API</a>. It is stored only on this device.</p>
       </div>
       <h3>Appearance</h3>
       <select class="field" id="set-theme" aria-label="Theme">
@@ -668,6 +671,12 @@ const actions = {
   tab(el) { ui.tab = el.dataset.tab; $('#view').scrollTop = 0; render(); },
   open(el) { openDetail(el.dataset.id); },
   close(el) { el.closest('dialog').close(); },
+  'clear-search'(el) {
+    const input = el.previousElementSibling;
+    input.value = '';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.focus();
+  },
   settings() { openSettings(); },
   manual() { openManual(); },
   theme() {

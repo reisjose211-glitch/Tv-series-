@@ -240,3 +240,16 @@ div.poster, span.poster {
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 .controls > p { flex: 1 1 auto; font-size: .84rem; }
 .controls > p + select { flex: 0 0 168px; }
+
+/* Search field with a clear button that shows only when there is text */
+.search { position: relative; }
+.search .field { padding-right: 44px; }
+.search input::-webkit-search-cancel-button { display: none; }
+.search-clear {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  width: 32px; height: 32px; border: 0; border-radius: 50%; background: none; color: var(--muted);
+  display: grid; place-items: center;
+}
+.search-clear svg { width: 18px; height: 18px; stroke-width: 2; }
+.search-clear:hover { color: var(--text); background: var(--fill-2); }
+.search input:placeholder-shown + .search-clear { display: none; }
