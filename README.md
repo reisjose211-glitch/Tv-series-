@@ -1,4 +1,4 @@
-# Series Tracker
+# Binged
 
 A phone-friendly web app to track the TV series you watch.
 

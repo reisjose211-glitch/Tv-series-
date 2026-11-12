@@ -1,6 +1,6 @@
 {
-  "name": "Series Tracker",
-  "short_name": "Series",
+  "name": "Binged",
+  "short_name": "Binged",
   "description": "Track, rate and plan the TV series you watch.",
   "start_url": ".",
   "display": "standalone",

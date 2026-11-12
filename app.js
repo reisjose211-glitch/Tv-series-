@@ -642,7 +642,7 @@ async function importData(file) {
     $('#modal').close();
     render();
     toast(`Imported ${entries().length} series`);
-  } catch (e) { toast('That file is not a Series Tracker backup'); }
+  } catch (e) { toast('That file is not a Binged backup'); }
 }
 
 function newList() {
@@ -830,6 +830,8 @@ $('#detail').addEventListener('close', () => {
 applyTheme();
 if (!hasKey() && entries().length) ui.tab = 'library';
 render();
+// Ask the browser not to clear the saved library when it frees up space.
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
