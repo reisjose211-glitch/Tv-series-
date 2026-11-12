@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Series Tracker</title>
   <meta name="description" content="Track the TV series you have watched, rate them and plan what to watch next.">
-  <meta name="theme-color" content="#0f1115">
+  <meta name="theme-color" content="#0a0a0b">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-180.png">
@@ -15,19 +15,19 @@
   <header class="top">
     <h1 id="title">Explore</h1>
     <div class="top-actions">
-      <button class="icon-btn" data-act="theme" aria-label="Switch light or dark theme" title="Switch theme">◐</button>
-      <button class="icon-btn" data-act="settings" aria-label="Settings" title="Settings">⚙</button>
+      <button class="icon-btn" data-act="theme" aria-label="Switch light or dark theme" title="Switch theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+      <button class="icon-btn" data-act="settings" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h9M19 7.5h1M4 16.5h1M11 16.5h9"/><circle cx="16" cy="7.5" r="2.5"/><circle cx="8" cy="16.5" r="2.5"/></svg></button>
     </div>
   </header>
 
   <main id="view"></main>
 
   <nav class="tabs" aria-label="Main">
-    <button data-act="tab" data-tab="explore"><span aria-hidden="true">🔍</span>Explore</button>
-    <button data-act="tab" data-tab="library"><span aria-hidden="true">📚</span>Library</button>
-    <button data-act="tab" data-tab="watched"><span aria-hidden="true">✅</span>Watched</button>
-    <button data-act="tab" data-tab="watchlist"><span aria-hidden="true">🕒</span>To Watch</button>
-    <button data-act="tab" data-tab="stats"><span aria-hidden="true">📊</span>Stats</button>
+    <button data-act="tab" data-tab="explore"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Explore</button>
+    <button data-act="tab" data-tab="library"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>Library</button>
+    <button data-act="tab" data-tab="watched"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5.5"/></svg>Watched</button>
+    <button data-act="tab" data-tab="watchlist"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4h11v16.5L12 16.5l-5.5 4z"/></svg>To Watch</button>
+    <button data-act="tab" data-tab="stats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-9M12 20V4M19 20v-6"/></svg>Stats</button>
   </nav>
 
   <dialog id="detail" class="sheet" aria-label="Series details"></dialog>
