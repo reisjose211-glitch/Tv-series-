@@ -294,7 +294,7 @@ function renderLibrary() {
   $('#view').innerHTML = `
     <input class="field" id="lib-q" type="search" placeholder="Filter your library…" aria-label="Filter your library" value="${esc(ui.libQ)}">
     <div class="chips" role="group" aria-label="Status">${statusChips}</div>
-    <div class="chips" role="group" aria-label="Your lists">${listChips}<button class="chip" data-act="list-new">＋ New list</button></div>
+    <div class="chips" role="group" aria-label="Your lists">${listChips}<button class="chip" data-act="list-new">+ New list</button></div>
     <div class="controls">
       <select class="field" id="lib-sort" aria-label="Sort by">
         <option value="added">Recently added</option><option value="name">A–Z</option><option value="rating">My rating</option>
@@ -390,19 +390,19 @@ function renderWatchlist() {
         <select class="field" id="pick-service" aria-label="Service for random pick"><option value="">Any service</option>${services.map((s) => `<option>${esc(s)}</option>`).join('')}</select>
         <select class="field" id="pick-genre" aria-label="Genre for random pick"><option value="">Any genre</option>${genres.map((g) => `<option>${esc(g)}</option>`).join('')}</select>
       </div>
-      <button class="btn primary block" data-act="pick" style="margin-top:8px">🎲 Pick something for me</button></div>`;
+      <button class="btn primary block" data-act="pick" style="margin-top:8px">Pick something for me</button></div>`;
   }
   if (watching.length) {
     html += `<div class="section-head"><h2>Currently watching</h2><small>${watching.length}</small></div>` +
-      watching.map((e) => row(e, `<span class="row-actions">${act(e.id, 'watched', '✓ Finished')}</span>`)).join('');
+      watching.map((e) => row(e, `<span class="row-actions">${act(e.id, 'watched', 'Finished')}</span>`)).join('');
   }
   if (todo.length) {
     html += `<div class="section-head"><h2>To watch</h2><small>${todo.length}</small></div>` +
-      todo.map((e) => row(e, `<span class="row-actions">${act(e.id, 'watching', '▶ Start')}</span>`)).join('');
+      todo.map((e) => row(e, `<span class="row-actions">${act(e.id, 'watching', 'Start')}</span>`)).join('');
   }
   if (paused.length) {
     html += `<div class="section-head"><h2>On hold</h2><small>${paused.length}</small></div>` +
-      paused.map((e) => row(e, `<span class="row-actions">${act(e.id, 'watching', '▶ Resume')}</span>`)).join('');
+      paused.map((e) => row(e, `<span class="row-actions">${act(e.id, 'watching', 'Resume')}</span>`)).join('');
   }
   $('#view').innerHTML = html;
   if ($('#pick-service')) {
@@ -428,8 +428,8 @@ function pickRandom() {
         <div><h2>${esc(e.name)}</h2><p class="meta">${esc([e.year, e.service].filter(Boolean).join(' · '))}</p>
         <p class="meta">${esc((e.genres || []).join(', '))}</p></div></div>
       <div class="stack" style="margin-top:18px">
-        <button class="btn primary" data-act="quick" data-id="${esc(e.id)}" data-v="watching">▶ Start watching</button>
-        ${pool.length > 1 ? '<button class="btn" data-act="pick">🎲 Pick again</button>' : ''}
+        <button class="btn primary" data-act="quick" data-id="${esc(e.id)}" data-v="watching">Start watching</button>
+        ${pool.length > 1 ? '<button class="btn" data-act="pick">Pick again</button>' : ''}
         <button class="btn" data-act="open" data-id="${esc(e.id)}">Details</button>
       </div></div>`;
   if (!m.open) m.showModal();
@@ -524,7 +524,7 @@ function renderDetail() {
       <label class="check"><input type="checkbox" id="fav" ${e.favourite ? 'checked' : ''}> ♥ Favourite</label>
       ${db.lists.map((l) => `<label class="check"><input type="checkbox" data-list="${esc(l.id)}" ${l.ids.includes(cur.id) ? 'checked' : ''}> ${esc(l.name)}</label>`).join('')}
       <div class="inline" style="margin-top:10px">
-        <button class="btn small" data-act="list-new">＋ New list</button>
+        <button class="btn small" data-act="list-new">+ New list</button>
         <button class="btn small danger" data-act="remove">Remove from library</button>
       </div>`;
   }
