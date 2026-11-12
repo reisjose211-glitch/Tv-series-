@@ -648,7 +648,7 @@ function newList() {
 
 /* ---------- Events ---------- */
 const actions = {
-  tab(el) { ui.tab = el.dataset.tab; window.scrollTo(0, 0); render(); },
+  tab(el) { ui.tab = el.dataset.tab; $('#view').scrollTop = 0; render(); },
   open(el) { openDetail(el.dataset.id); },
   close(el) { el.closest('dialog').close(); },
   settings() { openSettings(); },
