@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Series Tracker</title>
+  <meta name="description" content="Track the TV series you have watched, rate them and plan what to watch next.">
+  <meta name="theme-color" content="#0f1115">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <h1 id="title">Explore</h1>
+    <div class="top-actions">
+      <button class="icon-btn" data-act="theme" aria-label="Switch light or dark theme" title="Switch theme">◐</button>
+      <button class="icon-btn" data-act="settings" aria-label="Settings" title="Settings">⚙</button>
+    </div>
+  </header>
+
+  <main id="view"></main>
+
+  <nav class="tabs" aria-label="Main">
+    <button data-act="tab" data-tab="explore"><span aria-hidden="true">🔍</span>Explore</button>
+    <button data-act="tab" data-tab="library"><span aria-hidden="true">📚</span>Library</button>
+    <button data-act="tab" data-tab="watched"><span aria-hidden="true">✅</span>Watched</button>
+    <button data-act="tab" data-tab="watchlist"><span aria-hidden="true">🕒</span>To Watch</button>
+    <button data-act="tab" data-tab="stats"><span aria-hidden="true">📊</span>Stats</button>
+  </nav>
+
+  <dialog id="detail" class="sheet" aria-label="Series details"></dialog>
+  <dialog id="modal" class="sheet small" aria-label="Dialog"></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
