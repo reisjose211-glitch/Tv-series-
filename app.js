@@ -32,7 +32,7 @@ let db = loadDb();
 const ui = {
   tab: 'explore', q: '', exService: '', exGenre: '', exPage: 1,
   libStatus: 'all', libList: '', libSort: 'added', libGroup: false, libQ: '',
-  watchedSort: 'rating', pickService: '', pickGenre: ''
+  watchedSort: 'rating', watchedService: '', pickService: '', pickGenre: ''
 };
 const seen = new Map();      // id -> summary of shows seen in Explore
 let genreMap = null;         // TMDB genre id -> name
@@ -354,31 +354,37 @@ function renderLibraryResults() {
 
 /* Watched */
 function renderWatched() {
-  const list = entries().filter((e) => e.status === 'watched');
-  if (!list.length) {
+  const all = entries().filter((e) => e.status === 'watched');
+  if (!all.length) {
     $('#view').innerHTML = '<div class="empty">Nothing marked as watched yet. Open a series and choose “Watched”, then give it a rating out of 10.</div>';
     return;
   }
+  const services = [...new Set(all.map((e) => e.service || 'Other'))].sort();
+  if (!services.includes(ui.watchedService)) ui.watchedService = '';
+  const list = ui.watchedService ? all.filter((e) => (e.service || 'Other') === ui.watchedService) : all;
+  const byName = (a, b) => a.name.localeCompare(b.name);
+  const sorters = {
+    rating: (a, b) => (b.rating || 0) - (a.rating || 0) || byName(a, b),
+    low: (a, b) => (a.rating || 11) - (b.rating || 11) || byName(a, b),
+    recent: (a, b) => (b.watchedAt || 0) - (a.watchedAt || 0),
+    name: byName
+  };
+  list.sort(sorters[ui.watchedSort] || sorters.rating);
   const rated = list.filter((e) => e.rating);
   const avg = rated.length ? (rated.reduce((s, e) => s + e.rating, 0) / rated.length).toFixed(1) : '–';
-  const sorter = ui.watchedSort === 'name'
-    ? (a, b) => a.name.localeCompare(b.name)
-    : ui.watchedSort === 'recent' ? (a, b) => (b.watchedAt || 0) - (a.watchedAt || 0)
-      : (a, b) => (b.rating || 0) - (a.rating || 0) || a.name.localeCompare(b.name);
-  const groups = [...groupBy(list, (e) => e.service || 'Other')].sort((a, b) => b[1].length - a[1].length);
   $('#view').innerHTML = `
     <div class="controls" style="margin-top:0">
-      <p class="muted" style="align-self:center">${list.length} watched · average ★ ${avg}</p>
-      <select class="field" id="watched-sort" aria-label="Sort by">
-        <option value="rating">Highest rated</option><option value="recent">Recently watched</option><option value="name">A–Z</option>
+      <select class="field" id="watched-service" aria-label="Filter by streaming service">
+        <option value="">All services</option>${services.map((n) => `<option>${esc(n)}</option>`).join('')}
       </select>
-    </div>` +
-    groups.map(([name, items]) => {
-      const r = items.filter((e) => e.rating);
-      const a = r.length ? ' · avg ★ ' + (r.reduce((s, e) => s + e.rating, 0) / r.length).toFixed(1) : '';
-      return `<div class="section-head"><h2>${esc(name)}</h2><small>${items.length}${a}</small></div>` +
-        items.sort(sorter).map((e) => row(e, scoreHtml(e))).join('');
-    }).join('');
+      <select class="field" id="watched-sort" aria-label="Sort by">
+        <option value="rating">Highest rated</option><option value="low">Lowest rated</option>
+        <option value="recent">Recently watched</option><option value="name">A–Z</option>
+      </select>
+    </div>
+    <p class="muted" style="font-size:.8rem;margin:10px 0 4px">${list.length} series · average ★ ${avg}</p>` +
+    list.map((e) => row(e, scoreHtml(e))).join('');
+  $('#watched-service').value = ui.watchedService;
   $('#watched-sort').value = ui.watchedSort;
 }
 
@@ -768,6 +774,7 @@ document.addEventListener('change', (ev) => {
   else if (t.id === 'ex-genre') { ui.exGenre = t.value; ui.exPage = 1; renderExploreResults(); }
   else if (t.id === 'lib-sort') { ui.libSort = t.value; renderLibraryResults(); }
   else if (t.id === 'watched-sort') { ui.watchedSort = t.value; renderWatched(); }
+  else if (t.id === 'watched-service') { ui.watchedService = t.value; renderWatched(); }
   else if (t.id === 'set-theme') { db.settings.theme = t.value; save(); applyTheme(); }
   else if (t.id === 'set-region') { db.settings.region = t.value; providerList = null; apiCache.clear(); save(); render(); }
   else if (t.id === 'import-file') { if (t.files[0]) importData(t.files[0]); }
