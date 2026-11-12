@@ -222,7 +222,7 @@ function renderExplore() {
     return;
   }
   v.innerHTML = `
-    <input class="field" id="ex-q" type="search" placeholder="Search for a series…" aria-label="Search for a series" value="${esc(ui.q)}">
+    <div class="search"><input class="field" id="ex-q" type="search" placeholder="Search for a series…" aria-label="Search for a series" value="${esc(ui.q)}"><button class="search-clear" data-act="clear-search" aria-label="Clear search" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
     <div class="controls">
       <select class="field" id="ex-service" aria-label="Streaming service"><option value="">All services</option></select>
       <select class="field" id="ex-genre" aria-label="Genre"><option value="">All genres</option></select>
@@ -303,7 +303,7 @@ function renderLibrary() {
   const listChips = db.lists
     .map((l) => `<button class="chip" data-act="lib-list" data-v="${esc(l.id)}" aria-pressed="${ui.libList === l.id}">${esc(l.name)} (${l.ids.filter((id) => db.shows[id]).length})</button>`).join('');
   $('#view').innerHTML = `
-    <input class="field" id="lib-q" type="search" placeholder="Filter your library…" aria-label="Filter your library" value="${esc(ui.libQ)}">
+    <div class="search"><input class="field" id="lib-q" type="search" placeholder="Filter your library…" aria-label="Filter your library" value="${esc(ui.libQ)}"><button class="search-clear" data-act="clear-search" aria-label="Clear search" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div>
     <div class="chips" role="group" aria-label="Status">${statusChips}</div>
     <div class="chips" role="group" aria-label="Your lists">${listChips}<button class="chip" data-act="list-new">+ New list</button></div>
     <div class="controls">
@@ -668,6 +668,12 @@ const actions = {
   tab(el) { ui.tab = el.dataset.tab; $('#view').scrollTop = 0; render(); },
   open(el) { openDetail(el.dataset.id); },
   close(el) { el.closest('dialog').close(); },
+  'clear-search'(el) {
+    const input = el.previousElementSibling;
+    input.value = '';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.focus();
+  },
   settings() { openSettings(); },
   manual() { openManual(); },
   theme() {
