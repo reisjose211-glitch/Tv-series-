@@ -239,12 +239,21 @@ function renderExplore() {
   renderExploreResults();
 }
 
-async function renderExploreResults() {
+// keep === true refreshes in place (Load more, closing a series) without jumping to the top.
+async function renderExploreResults(keep) {
   const token = ++renderToken;
   const box = $('#ex-results');
   if (!box) return;
   const live = () => token === renderToken && ui.tab === 'explore';
-  box.innerHTML = '<p class="muted" style="margin-top:16px">Loading…</p>';
+  const view = $('#view');
+  const pos = keep === true && box.children.length
+    ? { top: view.scrollTop, rows: [...box.querySelectorAll('.hrow')].map((r) => r.scrollLeft) } : null;
+  const restore = () => {
+    if (!pos) return;
+    box.querySelectorAll('.hrow').forEach((r, i) => { r.scrollLeft = pos.rows[i] || 0; });
+    view.scrollTop = pos.top;
+  };
+  if (!pos) box.innerHTML = '<p class="muted" style="margin-top:16px">Loading…</p>';
   try {
     await loadGenres();
     const q = ui.q.trim();
@@ -266,6 +275,7 @@ async function renderExploreResults() {
         (items.length ? `<div class="grid">${items.map((r) => card(norm(r))).join('')}</div>` : '<div class="empty">Nothing found. Try another search.</div>') +
         (ui.exPage < total && items.length ? '<p style="text-align:center;margin-top:16px"><button class="btn" data-act="more">Load more</button></p>' : '') +
         '<p style="text-align:center;margin-top:16px"><button class="btn small" data-act="manual">Can’t find it? Add by hand</button></p>';
+      restore();
       return;
     }
     const [recs, trending, popular, top] = await Promise.all([
@@ -280,6 +290,7 @@ async function renderExploreResults() {
       section('Popular', popular.results.map(norm)) +
       section('Top rated', top.results.map(norm)) +
       (recs.length ? '' : '<p class="muted" style="margin-top:18px">Rate a few series 7 or higher to get personal recommendations.</p>');
+    restore();
   } catch (e) {
     if (live()) box.innerHTML = `<div class="empty">${esc(e.message)}</div>`;
   }
@@ -669,7 +680,7 @@ const actions = {
     toast(db.settings.apiKey ? 'Key saved' : 'Key removed');
     render();
   },
-  more() { ui.exPage++; renderExploreResults(); },
+  more(el) { ui.exPage++; el.disabled = true; el.textContent = 'Loading…'; renderExploreResults(true); },
   'lib-status'(el) { ui.libStatus = el.dataset.v; ui.libList = ''; renderLibrary(); },
   'lib-list'(el) { ui.libList = ui.libList === el.dataset.v ? '' : el.dataset.v; renderLibrary(); },
   'lib-group'() { ui.libGroup = !ui.libGroup; renderLibrary(); },
@@ -812,7 +823,7 @@ $('#detail').addEventListener('close', () => {
   cur = null;
   if (!dirty) return;
   dirty = false;
-  if (ui.tab === 'explore') renderExploreResults(); else render();
+  if (ui.tab === 'explore') renderExploreResults(true); else render();
 });
 
 /* ---------- Start ---------- */
