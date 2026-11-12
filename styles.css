@@ -50,14 +50,17 @@
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; height: 100%; }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
   font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
-  padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  /* App shell: the page itself never scrolls, only <main> does, so the
+     header and bottom bar cannot drift when the browser toolbar moves. */
+  height: 100%; height: 100dvh; overflow: hidden;
+  display: flex; flex-direction: column;
 }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -67,12 +70,10 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 
 /* Header */
 .top {
-  position: sticky; top: 0; z-index: 5;
+  flex: none; width: 100%;
   display: flex; align-items: center; justify-content: space-between;
-  max-width: 1000px; margin: 0 auto;
-  padding: calc(14px + env(safe-area-inset-top)) 20px 10px;
-  background: var(--glass);
-  -webkit-backdrop-filter: saturate(1.6) blur(18px); backdrop-filter: saturate(1.6) blur(18px);
+  padding: calc(14px + env(safe-area-inset-top)) max(20px, calc((100% - 960px) / 2)) 10px;
+  background: var(--bg);
 }
 .top h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -.03em; }
 .top-actions { display: flex; gap: 2px; margin-right: -8px; }
@@ -82,14 +83,17 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 }
 .icon-btn:hover { background: var(--fill); color: var(--text); }
 
-main { max-width: 1000px; margin: 0 auto; padding: 8px 20px 20px; }
+main {
+  flex: 1; min-height: 0; width: 100%;
+  overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+  padding: 8px max(20px, calc((100% - 960px) / 2)) 28px;
+}
 
 /* Bottom navigation */
 .tabs {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
+  flex: none; width: 100%;
   display: flex; justify-content: center;
-  background: var(--glass);
-  -webkit-backdrop-filter: saturate(1.6) blur(18px); backdrop-filter: saturate(1.6) blur(18px);
+  background: var(--bg);
   border-top: 1px solid var(--line);
   padding: 4px 8px env(safe-area-inset-bottom);
 }
