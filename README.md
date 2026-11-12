@@ -1,10 +1,10 @@
-# Series Tracker
+# Binged
 
 A phone-friendly web app to track the TV series you watch.
 
 - **Explore** – search, trending, popular, top rated, browse by streaming service and genre, and recommendations based on your ratings
 - **Library** – everything you have added, filtered by status, favourites or your own custom lists, optionally grouped by service
-- **Watched** – your finished series grouped by streaming service, each rated out of 10 (half points allowed)
+- **Watched** – all your finished series in one list, rated out of 10 (half points allowed), with a streaming-service filter and sorting
 - **To Watch** – your watchlist, what you are currently watching, and a random "pick something for me" button
 - **Stats** – totals, average rating, series per service, favourite genres and your top rated
 
